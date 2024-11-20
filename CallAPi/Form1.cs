@@ -26,7 +26,7 @@ namespace CallAPi
             try
             {
                 var ApiUrl = "https://integration-api.snap.pe/rest/v1/merchants/BhagwanMahaveerJainHospital/applications/BhagwanMahaveerJainHospital/send-message";
-        var AuthorizationToken = "Basic MzI3MDkzMjpjYmQ0Nzk0Mi1mYmFiLTQ4NTAtOTMwNC0yNTljNTQ2MGY1NjU=";
+        var AuthorizationToken = "";
 
 
         // Create the JSON payload dynamically
