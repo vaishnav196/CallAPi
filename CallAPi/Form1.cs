@@ -19,14 +19,15 @@ namespace CallAPi
             string userId = "SSSL";  // Replace with actual user ID
 
             // Call the async API method
-            await  BmjhApiCallAsync(mobileNumber, filepath, userId);
+            //  await  BmjhApiCallAsync(mobileNumber, filepath, userId);
+            var result = await SendWhatsAppMessageAsync(mobileNumber, filepath);
         }
         public static async Task BmjhApiCallAsync(string mobileNumber, string pdfUrl, string userId)
         {
             try
             {
                 var ApiUrl = "https://integration-api.snap.pe/rest/v1/merchants/BhagwanMahaveerJainHospital/applications/BhagwanMahaveerJainHospital/send-message";
-        var AuthorizationToken = "";
+        var AuthorizationToken = " write yoru fiex tken here";
 
 
         // Create the JSON payload dynamically
@@ -75,6 +76,55 @@ namespace CallAPi
                 Console.WriteLine($"Unexpected Error: {ex.Message}");
             }
         }
+        public static async Task<bool> SendWhatsAppMessageAsync(string mobileNumber, string pdfUrl)
+        {
+            var options = new RestClientOptions("https://integration-api.snap.pe")
+            {
+                MaxTimeout = -1 // Infinite timeout, adjust as needed
+            };
+            var client = new RestClient(options);
 
+            // Prepare the request
+            var request = new RestRequest("/rest/v1/merchants/BhagwanMahaveerJainHospital/applications/BhagwanMahaveerJainHospital/send-message", Method.Post);
+
+            // Add headers
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", "Basic MzI3MDkzMjpjYmQ0Nzk0Mi1mYmFiLTQ4NTAtOTMwNC0yNTljNTQ2MGY1NjU=");
+
+            // Prepare JSON body
+            var body = new
+            {
+                template = "lab_report",
+                template_type = "document",
+                mobile_number = mobileNumber,
+                url = pdfUrl
+            };
+
+            // Attach the body to the request
+            request.AddJsonBody(body);
+
+            try
+            {
+                // Execute the request
+                RestResponse response = await client.ExecuteAsync(request);
+
+                if (response.IsSuccessful)
+                {
+                    Console.WriteLine("API Response: " + response.Content); // Log success response
+                    return true; // Indicate success
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                    Console.WriteLine("API Error Response: " + response.Content);
+                    return false; // Indicate failure
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception: {ex.Message}");
+                return false; // Indicate failure
+            }
+        }
     }
 }
